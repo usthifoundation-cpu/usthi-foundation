@@ -141,6 +141,7 @@
 /* TOP SECTION */
 .ngo-top-section {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-bottom: 20px;
@@ -149,6 +150,8 @@
   background: #e9f7f7;
   padding: 15px;
   border-radius: 8px;
+   /* grid-column: 1 / -1;  
+  justify-self: center;  */
 }
 .ngo-qr-section {
   text-align: center;
