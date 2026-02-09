@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/contacts", {
+      const response = await fetch("https://app.usthifoundationindia.com/contacts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("screenshot", screenshot);
 
     try {
-      const response = await fetch("https://your-api-url.com/donation", {
+      const response = await fetch("https://app.usthifoundationindia.com/donation", {
         method: "POST",
         body: formData,
       });

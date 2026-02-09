@@ -2,7 +2,7 @@
 // PROGRAM SECTION API INTEGRATION   <img src="${API_BASE_URL}/${program.id}" alt="${program.heading}">
 // ================================
 
-const API_BASE_URL = "http://localhost:8000/images";
+const API_BASE_URL = "https://app.usthifoundationindia.com/images";
 
 document.addEventListener("DOMContentLoaded", () => {
   loadPrograms();

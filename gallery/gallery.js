@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("screenshot", screenshot);
 
     try {
-      const response = await fetch("https://your-api-url.com/donation", {
+      const response = await fetch("https://app.usthifoundationindia.com/donation", {
         method: "POST",
         body: formData,
       });
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAdminImages();
 });
 
-const API_BASE_URL = "http://localhost:8000/onlyImage";
+const API_BASE_URL = "https://app.usthifoundationindia.com/onlyImage";
 
 async function loadAdminImages() {
   try {
@@ -192,7 +192,7 @@ async function loadAdminImages() {
       div.className = "gallery-item";
 
       const imageEl = document.createElement("img");
-      imageEl.src = `http://localhost:8000${img.image_url}`;
+      imageEl.src = `https://app.usthifoundationindia.com${img.image_url}`;
       imageEl.alt = img.filename;
       imageEl.loading = "lazy";
 

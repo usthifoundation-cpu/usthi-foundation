@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("screenshot", screenshot);
 
     try {
-      const response = await fetch("https://your-api-url.com/donation", {
+      const response = await fetch("https://app.usthifoundationindia.com/donation", {
         method: "POST",
         body: formData,
       });

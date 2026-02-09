@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("screenshot", screenshot);
 
     try {
-      const response = await fetch("http://localhost:8000/images", {
+      const response = await fetch("https://app.usthifoundationindia.com/images", {
         method: "POST",
         body: formData,
       });
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // our program api call
-const API_BASE_URL = "http://localhost:8000/images";
+const API_BASE_URL = "https://app.usthifoundationindia.com/images";
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchPrograms();
@@ -337,7 +337,7 @@ async function fetchPrograms() {
 //     formData.append("screenshot", screenshot);
 
 //     try {
-//       const response = await fetch("https://localhost:8000/images", {
+//       const response = await fetch("https://app.usthifoundationindia.com/images", {
 //         method: "GET",
 //         body: formData,
 //       });
