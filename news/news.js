@@ -1,73 +1,8 @@
 // donate button section
 
-document.addEventListener("DOMContentLoaded", function () {
-
-  const donateBtn = document.getElementById("ngoDonateBtn");
-  const popup = document.getElementById("ngoDonatePopup");
-  const overlay = document.getElementById("ngoOverlay");
-  const closeBtn = document.getElementById("ngoCloseBtn");
-  const form = document.getElementById("ngoDonationForm");
-
-  donateBtn.addEventListener("click", function () {
-    popup.style.display = "block";
-    overlay.style.display = "block";
-  });
-
-  function closePopup() {
-    popup.style.display = "none";
-    overlay.style.display = "none";
-  }
-
-  closeBtn.addEventListener("click", closePopup);
-  overlay.addEventListener("click", closePopup);
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    alert("Thank you! Your donation details have been submitted.");
-    closePopup();
-  });
-
-});
-
-
-
-
-
-
-
-
 // end
 
 
-
-document.addEventListener("DOMContentLoaded", function () {
-
-  const donateBtn = document.getElementById("ngoDonateBtn");
-  const popup = document.getElementById("ngoDonatePopup");
-  const overlay = document.getElementById("ngoOverlay");
-  const closeBtn = document.getElementById("ngoCloseBtn");
-  const form = document.getElementById("ngoDonationForm");
-
-  donateBtn.addEventListener("click", function () {
-    popup.style.display = "block";
-    overlay.style.display = "block";
-  });
-
-  function closePopup() {
-    popup.style.display = "none";
-    overlay.style.display = "none";
-  }
-
-  closeBtn.addEventListener("click", closePopup);
-  overlay.addEventListener("click", closePopup);
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    alert("Thank you! Your donation details have been submitted.");
-    closePopup();
-  });
-
-});
 
 // end
 // toggle button section
@@ -167,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("screenshot", screenshot);
 
     try {
-      const response = await fetch("https://app.usthifoundationindia.com/donation", {
+      const response = await fetch(window.getBackendUrl() + "/donation", {
         method: "POST",
         body: formData,
       });
@@ -184,3 +119,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+

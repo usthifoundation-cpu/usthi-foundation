@@ -1,3 +1,10 @@
+const isAdminLoggedIn =
+  sessionStorage.getItem("usthi_admin_logged_in") === "true" ||
+  localStorage.getItem("usthi_admin_logged_in") === "true";
+
+if (!isAdminLoggedIn) {
+  window.location.href = "login.html";
+}
 document.getElementById("adminPanel").style.display = "flex";
 
 let currentType = "";
@@ -23,7 +30,9 @@ function closePopup() {
 }
 
 function logout() {
-  location.reload();
+  sessionStorage.removeItem("usthi_admin_logged_in");
+  localStorage.removeItem("usthi_admin_logged_in");
+  window.location.href = "login.html";
 }
 
 function toggleSidebar() {
@@ -149,7 +158,7 @@ async function submitUpload() {
       formData.append("file", file.files[i]);
     }
 
-    const res = await fetch("https://app.usthifoundationindia.com/onlyImage/upload", {
+    const res = await fetch(window.getBackendUrl() + "/onlyImage/upload", {
       method: "POST",
       body: formData,
     });
@@ -167,6 +176,7 @@ async function submitUpload() {
 
   // 🔴 PROGRAM UPLOAD
   if (uploadType === "Program") {
+    const fileInput = document.getElementById("uploadInput");
     const heading = document.getElementById("eventTitle").value.trim();
     const description = document.getElementById("eventDesc").value.trim();
 
@@ -183,7 +193,7 @@ async function submitUpload() {
       formData.append("file", fileInput.files[i]);
     }
 
-    const res = await fetch("https://app.usthifoundationindia.com/onlyImage", {
+    const res = await fetch(window.getBackendUrl() + "/images", {
       method: "POST",
       body: formData,
     });
@@ -205,23 +215,23 @@ async function submitUpload() {
 
 
 async function loadEvents() {
-  const container = document.getElementById("eventGrid");
+  const container = document.getElementById("galleryGrid");
   if (!container) return;
 
   container.innerHTML = "";
 
-  const res = await fetch("https://app.usthifoundationindia.com/images");
+  const res = await fetch(window.getBackendUrl() + "/images");
   const events = await res.json();
 
   events.forEach((e) => {
     const card = document.createElement("div");
-    card.className = "event-card";
+    card.className = "gallery-card";
 
     card.innerHTML = `
-      <h3>${e.title}</h3>
-      <p>${e.description}</p>
+      <h3>${e.heading || "Program"}</h3>
+      <p>${e.description || ""}</p>
       <div class="event-images">
-        ${e.images.map((img) => `<img src="${img}" />`).join("")}
+        <img src="${window.getBackendUrl()}${e.image_url}" />
       </div>
 
       <button onclick="deleteEvent('${e.id}')">Delete</button>
@@ -234,7 +244,7 @@ async function loadEvents() {
 async function deleteEvent(id) {
   if (!confirm("Delete this event?")) return;
 
-  await fetch(`https://app.usthifoundationindia.com/images/${id}`, {
+  await fetch(`${window.getBackendUrl()}/images/${id}`, {
     method: "DELETE",
   });
 
@@ -261,7 +271,7 @@ if (contactForm) {
       subject: inputs[3].value.trim(),
       message: inputs[4].value.trim(),
     };
-    await fetch("https://app.usthifoundationindia.com/contacts", {
+    await fetch(window.getBackendUrl() + "/contacts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contactData),
@@ -285,7 +295,7 @@ async function loadContactMessages() {
   const grid = document.getElementById("contactGrid");
   grid.innerHTML = "";
 
-  const res = await fetch("https://app.usthifoundationindia.com/contacts");
+  const res = await fetch(window.getBackendUrl() + "/contacts");
   const messages = await res.json();
 
   messages.forEach((msg) => {
@@ -317,7 +327,7 @@ async function loadContactMessages() {
 }
 async function markAsRead(id, e) {
   e.stopPropagation();
-  await fetch(`https://app.usthifoundationindia.com/contacts/${id}/read`, {
+  await fetch(`${window.getBackendUrl()}/contacts/${id}/read`, {
     method: "PUT",
   });
   loadContactMessages();
@@ -329,7 +339,7 @@ async function deleteMessage(id, e, btn) {
   if (!confirm("Delete this message?")) return;
 
   try {
-    const res = await fetch(`https://app.usthifoundationindia.com/contacts/${id}`, {
+    const res = await fetch(`${window.getBackendUrl()}/contacts/${id}`, {
       method: "DELETE",
     });
 
@@ -352,23 +362,28 @@ async function deleteMessage(id, e, btn) {
 
 // async function deleteMessage(id, e) {
 //   e.stopPropagation();
-//   await fetch(`https://app.usthifoundationindia.com/contacts/${id}`, {
+//   await fetch(`${window.getBackendUrl()}/contacts/${id}`, {
 //     method: "DELETE",
 //   });
 //   loadContactMessages();
 // }
 
 async function updateMessageCounter() {
-  const res = await fetch("https://app.usthifoundationindia.com/contacts/unread-count");
-  const data = await res.json();
+  try {
+    const res = await fetch(window.getBackendUrl() + "/contacts/unread-count");
+    if (!res.ok) return;
+    const data = await res.json();
 
-  const el = document.getElementById("msgCount");
-  el.innerText = data.count;
-  el.style.display = data.count > 0 ? "inline-block" : "none";
+    const el = document.getElementById("msgCount");
+    el.innerText = data.count;
+    el.style.display = data.count > 0 ? "inline-block" : "none";
+  } catch (err) {
+    console.error("Error updating contact counter:", err);
+  }
 }
 async function openMessagePopup(msg) {
   if (!msg.read) {
-    await fetch(`https://app.usthifoundationindia.com/contacts/${msg.id}/read`, {
+    await fetch(`${window.getBackendUrl()}/contacts/${msg.id}/read`, {
       method: "PUT",
     });
   }
@@ -400,7 +415,7 @@ document.getElementById("messagePopup").addEventListener("click", function (e) {
    DONATION STORAGE & ADMIN PANEL
 ==================================================================================================================================================================== */
 
-const API_BASE_URL = "https://app.usthifoundationindia.com";
+const API_BASE_URL = window.getBackendUrl();
 // const DONATE_API = `${API_BASE_URL}/donate`;
 
 // OPEN / CLOSE PAGE
@@ -422,7 +437,7 @@ async function loadDonations() {
   grid.innerHTML =
     "<p style='text-align:center;color:#888'>Loading donations...</p>";
 
-  // const res = await fetch("https://app.usthifoundationindia.com/api/donation");
+  // const res = await fetch(window.getBackendUrl() + "/api/donation");
   try {
     const res = await fetch(`${API_BASE_URL}/donate/`);
 
@@ -518,7 +533,7 @@ async function markDonationRead(id, e) {
    DELETE DONATION
 ------------------------ */
 async function deleteDonation(id, e, btn) {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
 
   if (!confirm("Are you sure you want to delete this donation?")) return;
 
@@ -532,12 +547,8 @@ async function deleteDonation(id, e, btn) {
       return;
     }
 
-    // ✅ Remove from DOM immediately
-    const card = btn.closest(".donation-card");
-    if (card) card.remove();
-
-    updateDonationCounter();
-    updateStatsCounts();
+    // Refresh from API so latest data shows immediately without manual page refresh
+    await loadDonations();
   } catch (err) {
     console.error(err);
     alert("Error deleting donation");
@@ -560,7 +571,7 @@ async function deleteDonation(id, e, btn) {
    UPDATE DONATION COUNTER
 ------------------------ */
 async function updateDonationCounter() {
-  // const res = await fetch("https://app.usthifoundationindia.com/api/donation/unread-count");
+  // const res = await fetch(window.getBackendUrl() + "/api/donation/unread-count");
   try {
     // const res = await fetch(`${DONATE_API}/unread-count`);
     const res = await fetch(`${API_BASE_URL}/donate/unread-count`);
@@ -622,7 +633,7 @@ function closeDonationPopup() {
 async function updateStatsCounts() {
   try {
     // CONTACT COUNT
-    // const contactRes = await fetch("https://app.usthifoundationindia.com/contacts");
+    // const contactRes = await fetch(window.getBackendUrl() + "/contacts");
     // const contactRes = await fetch(`${API_BASE_URL}/contacts`);
     const contactRes = await fetch(`${API_BASE_URL}/contacts`);
 
@@ -631,7 +642,7 @@ async function updateStatsCounts() {
     if (contactEl) contactEl.innerText = contacts.length;
 
     // DONATION COUNT
-    // const donationRes = await fetch("https://app.usthifoundationindia.com/api/donation");
+    // const donationRes = await fetch(window.getBackendUrl() + "/api/donation");
     const donationRes = await fetch(`${API_BASE_URL}/donate/`);
     const donations = await donationRes.json();
 
@@ -648,7 +659,7 @@ async function loadGalleryImages() {
   const grid = document.getElementById("galleryGrid");
   grid.innerHTML = "Loading...";
 
-  const res = await fetch("https://app.usthifoundationindia.com/images");
+  const res = await fetch(window.getBackendUrl() + "/onlyImage");
   const images = await res.json();
 
   grid.innerHTML = "";
@@ -656,9 +667,12 @@ async function loadGalleryImages() {
   images.forEach((img) => {
     const card = document.createElement("div");
     card.className = "gallery-card";
+    const imageSrc = img.image_url
+      ? `${window.getBackendUrl()}${img.image_url}`
+      : (img.url || "");
 
     card.innerHTML = `
-      <img src="${img.image_url || img.url}">
+      <img src="${imageSrc}">
       <button onclick="deleteImage('${img.id}', this)">Delete</button>
     `;
 
@@ -668,7 +682,7 @@ async function loadGalleryImages() {
 async function deleteImage(id, btn) {
   if (!confirm("Delete this image?")) return;
 
-  const res = await fetch(`https://app.usthifoundationindia.com/images/${id}`, {
+  const res = await fetch(`${window.getBackendUrl()}/onlyImage/${id}`, {
     method: "DELETE",
   });
 
@@ -687,3 +701,21 @@ function openGallery() {
 function closeGallery() {
   document.getElementById("galleryAdmin").style.display = "none";
 }
+
+function showGallery() {
+  document.getElementById("galleryAdmin").style.display = "block";
+  loadEvents();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateMessageCounter();
+  updateDonationCounter();
+  updateStatsCounts();
+  setInterval(() => {
+    updateMessageCounter();
+    updateDonationCounter();
+  }, 10000);
+});
+
+
+

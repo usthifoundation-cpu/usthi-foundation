@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("screenshot", screenshot);
 
     try {
-      const response = await fetch("https://app.usthifoundationindia.com/donation", {
+      const response = await fetch(window.getBackendUrl() + "/donation", {
         method: "POST",
         body: formData,
       });
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAdminImages();
 });
 
-const API_BASE_URL = "https://app.usthifoundationindia.com/onlyImage";
+const API_BASE_URL = `${window.getBackendUrl()}/onlyImage`;
 
 async function loadAdminImages() {
   try {
@@ -192,7 +192,7 @@ async function loadAdminImages() {
       div.className = "gallery-item";
 
       const imageEl = document.createElement("img");
-      imageEl.src = `https://app.usthifoundationindia.com${img.image_url}`;
+      imageEl.src = `${window.getBackendUrl()}${img.image_url}`;
       imageEl.alt = img.filename;
       imageEl.loading = "lazy";
 
@@ -204,4 +204,6 @@ async function loadAdminImages() {
     console.error("❌ Error loading admin images:", error);
   }
 }
+  
+
   

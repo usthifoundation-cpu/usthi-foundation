@@ -1,28 +1,32 @@
+function setAdminAuth(value) {
+  try {
+    sessionStorage.setItem("usthi_admin_logged_in", value);
+  } catch (_e) {}
+  try {
+    localStorage.setItem("usthi_admin_logged_in", value);
+  } catch (_e) {}
+}
+
 document
   .getElementById("loginForm")
   .addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
     const errorMessage = document.getElementById("errorMessage");
 
     errorMessage.innerText = "";
 
-    // if (username === "a@gmail.com" && password === "123456") {
-    //   showPopup("Login successful", "success");
-    //   document.getElementById("authModal").style.display = "none";
-    //   adminPanel.style.display = "flex";
-    //   return;
-    // }
-    // ✅ DUMMY LOGIN (ADDED)
-    if (username === "a@gmail.com" && password === "123456") {
+    // local fallback admin login
+    if (username.toLowerCase() === "a@gmail.com" && password === "123456") {
+      setAdminAuth("true");
       window.location.href = "dashboard.html";
       return;
     }
 
     try {
-      const response = await fetch("https://app.usthifoundationindia.com/login", {
+      const response = await fetch(window.getBackendUrl() + "/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,10 +38,9 @@ document
       });
 
       if (response.ok) {
-        // ✅ Login success → redirect
+        setAdminAuth("true");
         window.location.href = "dashboard.html";
       } else {
-        // ❌ Login failed → show popup message
         const data = await response.json();
         errorMessage.innerText = data.detail || "Invalid username or password";
       }
