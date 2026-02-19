@@ -1,5 +1,5 @@
 (function () {
-  const DEFAULT_BACKEND_URL = "http://127.0.0.1:8000";
+  const DEFAULT_BACKEND_URL = "https://usthifoundationindia.com";
 
   function parseEnv(envText) {
     const result = {};
