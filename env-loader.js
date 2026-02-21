@@ -1,5 +1,5 @@
 (function () {
-  const DEFAULT_BACKEND_URL = "https://usthi-3.onrender.com";
+  const DEFAULT_BACKEND_URL = "https://usthi-foundation-backend.onrender.com";
 
   function parseEnv(envText) {
     const result = {};
